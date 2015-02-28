@@ -8,11 +8,7 @@ This file creates your application.
 
 from app import app
 from flask import render_template, request, redirect, url_for
-# from flask_wtf import Form
-# from wtforms import StringField
-from flask.ext.wtf import Form
-from wtforms.fields import TextField
-from wtforms.validators import Required
+from wtforms import TextField, Form, IntegerField, validators
 
 from app import db
 from app.models import Profile
@@ -21,51 +17,58 @@ from app.models import Profile
 # Routing for your application.
 ###
 
+
 @app.route('/')
 def home():
     """Render website's home page."""
     return render_template('home.html')
 
+
 class ProfileForm(Form):
-    username = TextField('username', validators=[Required()])  
-    firstname = TextField('firstname', validators=[Required()])
-    lastname = TextField('lastname', validators=[Required()])
-#     age = TextField('age', validators=[Required()])
-    sex = TextField('sex', validators=[Required()])
-  
+    username = TextField('username', [validators.Required()])
+    firstname = TextField('firstname', [validators.Required()])
+    lastname = TextField('lastname', [validators.Required()])
+    age = IntegerField('age', [validators.Required()])
+    sex = TextField('sex', [validators.Required()])
+
+
 @app.route('/profile/', methods=('GET', 'POST'))
 def add_profile():
     """route for adding profile"""
     form = ProfileForm(csrf_enabled=False)
     if request.method == "POST":
-#         if form.validate_on_submit():
-        username = request.form['username']
-        firstname = request.form['firstname']
-        lastname = request.form['lastname']
-#         age = request.form['age']
-        sex = request.form['sex']
-        newprofile = Profile(username,firstname,lastname,sex)
-        db.session.add(newprofile)
-        db.session.commit()
-        return redirect('/success')
+        if form.validate_on_submit():
+          username = request.form['username']
+          firstname = request.form['firstname']
+          lastname = request.form['lastname']
+          age = request.form['age']
+          sex = request.form['sex']
+          newprofile = Profile(username, firstname, lastname, sex, age)
+          db.session.add(newprofile)
+          db.session.commit()
+        return redirect(url_for('success'))
     return render_template('profile.html', form=form)
 #     return "add a profile"
+
 
 @app.route('/success')
 def success():
     return render_template('success.html')
 
+
 @app.route('/profiles/')
 def list_profiles():
     """route for viewing list of profiles"""
-    import pdb;pdb.set_trace()
+    import pdb
+    pdb.set_trace()
     profiles = Profile.query.all()
-    return render_template('profiles.html',profiles=profiles)  
+    return render_template('profiles.html', profiles=profiles)
 
 # @app.route('/profile/,<int: id>')
 # def thing():
 #     """route for viewing a profile"""
-  
+
+
 @app.route('/about/')
 def about():
     """Render the website's about page."""
@@ -101,4 +104,4 @@ def page_not_found(error):
 
 
 if __name__ == '__main__':
-    app.run(debug=True,host="0.0.0.0",port="8888")
+    app.run(debug=True, host="0.0.0.0", port="8888")
