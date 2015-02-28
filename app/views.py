@@ -32,12 +32,12 @@ class ProfileForm(Form):
     sex = TextField('sex', [validators.Required()])
 
 
-@app.route('/profile/', methods=('GET', 'POST'))
+@app.route('/profile', methods=('GET', 'POST'))
 def add_profile():
     """route for adding profile"""
     form = ProfileForm(csrf_enabled=False)
     if request.method == "POST":
-        if form.validate_on_submit():
+        if form.validate():
           username = request.form['username']
           firstname = request.form['firstname']
           lastname = request.form['lastname']
@@ -56,11 +56,9 @@ def success():
     return render_template('success.html')
 
 
-@app.route('/profiles/')
+@app.route('/view')
 def list_profiles():
     """route for viewing list of profiles"""
-    import pdb
-    pdb.set_trace()
     profiles = Profile.query.all()
     return render_template('profiles.html', profiles=profiles)
 

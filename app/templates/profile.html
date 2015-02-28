@@ -7,7 +7,6 @@
     <div class="contactus">
       <h1> Create User Profile </h1>
       <form action="{{url_for('add_profile')}}" method="POST" enctype="multipart/form-data">
-          {{ form.hidden_tag() }}
           Username {{ form.username }}
 <!--           <input name="username" type="text" class="fields"> -->
           <br>
